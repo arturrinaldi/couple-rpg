@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { supabase } from './lib/supabase';
 import './styles/global.css';
@@ -29,19 +29,31 @@ const SetupNeeded = () => (
 );
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  
   if (!supabase) return <SetupNeeded />;
-  if (!user) return <Navigate to="/login" />;
+  if (loading) return null; // Wait for auth check
+  if (!user) return <Navigate to="/login" replace />;
+  
+  return children;
+};
+
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) return null;
+  if (user) return <Navigate to="/" replace />;
+  
   return children;
 };
 
 function App() {
   return (
-    <Router basename="/couple-rpg">
+    <Router>
       <AuthProvider>
         <div className="app-container">
           <Routes>
-            <Route path="/login" element={!supabase ? <SetupNeeded /> : <Login />} />
+            <Route path="/login" element={!supabase ? <SetupNeeded /> : <PublicRoute><Login /></PublicRoute>} />
             <Route 
               path="/" 
               element={
@@ -74,6 +86,8 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            {/* Fallback for sub-routes */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </AuthProvider>
