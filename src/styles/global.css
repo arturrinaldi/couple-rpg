@@ -11,12 +11,15 @@
   --glass-border: rgba(236, 72, 153, 0.2);
   --medieval-gold: #fbbf24;
   --medieval-stone: #2d1b33;
+  /* New Colors for better status */
+  --success: #10b981;
+  --error: #ef4444;
 }
 
-@font-face {
-  font-family: 'Medieval';
-  src: url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
-}
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;700;900&display=swap');
+
+
+
 
 * {
   box-sizing: border-box;
@@ -39,9 +42,29 @@ body {
 }
 
 .medieval-font {
-  font-family: 'MedievalSharp', cursive;
+  font-family: 'MedievalSharp', cursive !important;
   letter-spacing: 0.02em;
 }
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .glass-card {
+    padding: 20px !important;
+  }
+  
+  h1 { font-size: 1.8rem !important; }
+}
+
 
 .glass-card {
   background: var(--bg-card);
@@ -72,24 +95,65 @@ body {
   filter: brightness(1.2);
 }
 
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
 .input-group label {
   color: var(--medieval-gold);
   font-family: 'MedievalSharp', cursive;
+  font-size: 1rem;
+  text-align: left;
 }
 
 .input-group input {
-  background: rgba(0,0,0,0.4);
-  border: 1px solid var(--glass-border);
-  border-radius: 4px;
+  background: rgba(0,0,0,0.6);
+  border: 2px solid var(--glass-border);
+  border-radius: 8px;
   padding: 14px;
+  color: white;
+  width: 100%;
+  font-size: 1rem;
+  transition: border-color 0.2s;
 }
 
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100vw;
+  margin-left: -20px; /* Offset container padding */
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 12px 16px;
+    margin-left: -12px;
+  }
+}
 
 .logo {
   font-size: 1.5rem;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: linear-gradient(135deg, var(--medieval-gold), #fff);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
 }
+

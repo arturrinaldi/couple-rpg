@@ -52,6 +52,17 @@ const Quests = () => {
 
     if (error) alert(error.message);
     else {
+      // Create notification for partner
+      try {
+        await supabase.from('notifications').insert([{
+          user_id: profile.partner_id,
+          message: `🛡️ Nova missão: ${newQuest.title}!`,
+          read: false
+        }]);
+      } catch (e) {
+        console.log("Notifications table not ready yet");
+      }
+      
       setShowAddModal(false);
       setNewQuest({ title: '', description: '', xp: 10, coins: 5 });
       fetchQuests();

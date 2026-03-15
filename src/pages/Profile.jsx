@@ -6,10 +6,17 @@ import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const { profile, user, refreshProfile } = useAuth();
-  const [partnerUsername, setPartnerUsername] = useState('');
-  const [username, setUsername] = useState(profile?.username || '');
+  const [partnerEmail, setPartnerEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Fix: Sync username when profile loads
+  React.useEffect(() => {
+    if (profile?.username && !username) {
+      setUsername(profile.username);
+    }
+  }, [profile]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -35,17 +42,17 @@ const Profile = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Find partner by username
+    // Find partner by email
     const { data: partner, error: findError } = await supabase
       .from('profiles')
       .select('id')
-      .eq('username', partnerUsername)
+      .eq('email', partnerEmail)
       .single();
 
     if (findError) {
-      alert('Partner not found. Make sure they created an account and set a username.');
+      alert('Parceiro não encontrado. Verifique se o e-mail está correto e se ele já criou uma conta.');
     } else if (partner.id === user.id) {
-      alert("You can't be your own partner! (Or can you... but not in this app)");
+      alert("Você não pode ser seu próprio parceiro!");
     } else {
       const { error: updateError } = await supabase
         .from('profiles')
@@ -54,7 +61,7 @@ const Profile = () => {
 
       if (updateError) alert(updateError.message);
       else {
-        alert('Partner linked successfully!');
+        alert('Parceiro vinculado com sucesso!');
         refreshProfile();
       }
     }
@@ -105,14 +112,14 @@ const Profile = () => {
           </div>
         ) : (
           <form onSubmit={handleLinkPartner}>
-            <p style={{ color: 'var(--text-dim)', fontSize: '1rem', marginBottom: '20px', fontStyle: 'italic' }}>Digite o nome de aventureiro do seu parceiro para unirem suas forças.</p>
+            <p style={{ color: 'var(--text-dim)', fontSize: '1rem', marginBottom: '20px', fontStyle: 'italic' }}>Digite o e-mail de cadastro do seu parceiro para unirem suas forças.</p>
             <div className="input-group">
-              <label className="medieval-font">Nome do Parceiro</label>
+              <label className="medieval-font">E-mail do Parceiro</label>
               <input 
-                type="text" 
-                value={partnerUsername} 
-                onChange={(e) => setPartnerUsername(e.target.value)} 
-                placeholder="Ex: Nome que o parceiro escolheu"
+                type="email" 
+                value={partnerEmail} 
+                onChange={(e) => setPartnerEmail(e.target.value)} 
+                placeholder="Ex: parceiro@reino.com"
                 required 
               />
             </div>

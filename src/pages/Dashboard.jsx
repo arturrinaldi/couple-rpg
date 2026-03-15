@@ -6,7 +6,29 @@ import { supabase } from '../lib/supabase';
 
 const Dashboard = () => {
   const { profile, user } = useAuth();
+  const [notifications, setNotifications] = React.useState([]);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user]);
+
+  const fetchNotifications = async () => {
+    const { data } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('read', false)
+      .order('created_at', { ascending: false });
+    if (data) setNotifications(data);
+  };
+
+  const markAsRead = async (id) => {
+    await supabase.from('notifications').update({ read: true }).eq('id', id);
+    setNotifications(notifications.filter(n => n.id !== id));
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -29,18 +51,38 @@ const Dashboard = () => {
         </div>
       </nav>
 
+      {/* Notifications Alert */}
+      {notifications.length > 0 && (
+        <div style={{ marginBottom: '24px' }}>
+          {notifications.map(n => (
+            <div key={n.id} className="glass-card fade-in" style={{ padding: '16px', borderLeft: '6px solid var(--medieval-gold)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(251, 191, 36, 0.1)', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Sword size={18} color="var(--medieval-gold)" />
+                <p className="medieval-font" style={{ fontSize: '0.9rem', color: 'var(--medieval-gold)' }}>{n.message}</p>
+              </div>
+              <button 
+                onClick={() => markAsRead(n.id)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', fontSize: '1.2rem' }}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="glass-card fade-in" style={{ padding: '30px', marginBottom: '32px', border: '4px solid var(--medieval-stone)', position: 'relative', overflow: 'visible' }}>
         <div style={{ position: 'absolute', top: '-15px', right: '20px', background: 'var(--medieval-gold)', color: '#000', padding: '4px 12px', borderRadius: '4px', fontWeight: 900, fontFamily: 'MedievalSharp', boxShadow: '0 4px 0 #b45309' }}>
           LVL {profile?.level || 1}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative' }}>
             <div style={{ width: '90px', height: '90px', borderRadius: '12px', background: 'var(--medieval-stone)', border: '4px solid var(--medieval-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', boxShadow: 'inset 0 0 15px rgba(0,0,0,0.5)' }}>
               {profile?.avatar_url ? <img src={profile.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '8px' }} /> : '🧙‍♂️'}
             </div>
           </div>
-          <div>
+          <div style={{ minWidth: '200px' }}>
             <h2 className="medieval-font" style={{ fontSize: '1.8rem', color: 'var(--medieval-gold)', marginBottom: '4px' }}>{profile?.username || user?.email?.split('@')[0]}</h2>
             <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Heart size={14} fill="currentColor" /> Eternal Partner

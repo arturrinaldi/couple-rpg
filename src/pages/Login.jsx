@@ -38,12 +38,20 @@ const Login = () => {
     if (error) {
       setError(error.message);
     } else {
-      // Since email confirmation is disabled, user is auto-logged in or can login immediately
+      // Create profile record with email
       if (data?.user) {
-         navigate('/');
+        await supabase.from('profiles').upsert({
+          id: data.user.id,
+          email: email,
+          username: email.split('@')[0],
+          level: 1,
+          xp: 0,
+          coins: 0
+        });
+        navigate('/');
       } else {
-         setError("Conta criada com sucesso! Você já pode entrar.");
-         setIsSignUp(false);
+        setError("Conta criada com sucesso! Você já pode entrar.");
+        setIsSignUp(false);
       }
     }
     setLoading(false);
