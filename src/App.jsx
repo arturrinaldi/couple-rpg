@@ -36,10 +36,6 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
-  if (!supabase && window.location.pathname !== '/couple-rpg/') {
-     // If no supabase and not on home, just show setup
-  }
-
   return (
     <Router basename="/couple-rpg">
       <AuthProvider>

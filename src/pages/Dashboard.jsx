@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Sword, Shield, Star, Heart, Trophy, LogOut, User as UserIcon } from 'lucide-react';
+import { Sword, Shield, Star, Heart, Trophy, LogOut, User as UserIcon, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
-import { ChevronLeft, User, Link as LinkIcon, Save } from 'lucide-react';
+import { ChevronLeft, User as UserIcon, Link as LinkIcon, Save } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
@@ -63,62 +63,62 @@ const Profile = () => {
 
   return (
     <div className="container">
-      <header style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-        <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
+      <header style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
+        <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: 'var(--medieval-gold)', cursor: 'pointer' }}>
           <ChevronLeft size={24} />
         </button>
-        <h1 style={{ fontSize: '1.5rem' }}>Settings</h1>
+        <h1 className="medieval-font" style={{ fontSize: '1.8rem', color: 'var(--medieval-gold)' }}>Configurações</h1>
       </header>
 
-      <div className="glass-card fade-in" style={{ padding: '24px', marginBottom: '24px' }}>
-        <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <User size={18} color="var(--primary)" />
-          My Profile
+      <div className="glass-card fade-in" style={{ padding: '30px', marginBottom: '32px', border: '4px solid var(--medieval-stone)' }}>
+        <h3 className="medieval-font" style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--medieval-gold)', fontSize: '1.4rem' }}>
+          <UserIcon size={24} color="var(--primary)" />
+          Seu Perfil
         </h3>
         <form onSubmit={handleUpdateProfile}>
           <div className="input-group">
-            <label>Username</label>
+            <label className="medieval-font">Nome de Aventureiro</label>
             <input 
               type="text" 
               value={username} 
               onChange={(e) => setUsername(e.target.value)} 
-              placeholder="Your adventure name"
+              placeholder="Ex: Sir Lancelot ou Lady Guinevere"
               required 
             />
           </div>
-          <button type="submit" className="btn-primary" style={{ width: '100%' }} disabled={loading}>
-            <Save size={18} />
-            Save Profile
+          <button type="submit" className="btn-primary medieval-font" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '1.1rem' }} disabled={loading}>
+            <Save size={20} />
+            Salvar Pergaminho
           </button>
         </form>
       </div>
 
-      <div className="glass-card fade-in" style={{ padding: '24px', animationDelay: '0.1s' }}>
-        <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <LinkIcon size={18} color="var(--secondary)" />
-          Link Partner
+      <div className="glass-card fade-in" style={{ padding: '30px', animationDelay: '0.1s', border: '4px solid var(--medieval-stone)' }}>
+        <h3 className="medieval-font" style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--medieval-gold)', fontSize: '1.4rem' }}>
+          <LinkIcon size={24} color="var(--secondary)" />
+          Vincular Parceiro
         </h3>
         {profile?.partner_id ? (
-          <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-            <p style={{ color: 'var(--success)', fontWeight: 600, fontSize: '0.875rem' }}>✓ You are linked to a partner!</p>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.75rem', marginTop: '4px' }}>Partner ID: {profile.partner_id}</p>
+          <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '20px', borderRadius: '8px', border: '2px solid var(--accent)', textAlign: 'center' }}>
+            <p className="medieval-font" style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: '1.1rem' }}>✓ Vocês estão unidos para sempre!</p>
+            <p style={{ color: 'var(--text-dim)', fontSize: '0.8rem', marginTop: '8px' }}>ID do Herói: {profile.partner_id}</p>
           </div>
         ) : (
           <form onSubmit={handleLinkPartner}>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.875rem', marginBottom: '16px' }}>Enter your partner's username to connect your adventures.</p>
+            <p style={{ color: 'var(--text-dim)', fontSize: '1rem', marginBottom: '20px', fontStyle: 'italic' }}>Digite o nome de aventureiro do seu parceiro para unirem suas forças.</p>
             <div className="input-group">
-              <label>Partner's Username</label>
+              <label className="medieval-font">Nome do Parceiro</label>
               <input 
                 type="text" 
                 value={partnerUsername} 
                 onChange={(e) => setPartnerUsername(e.target.value)} 
-                placeholder="Partner's name"
+                placeholder="Ex: Nome que o parceiro escolheu"
                 required 
               />
             </div>
-            <button type="submit" className="btn-secondary" style={{ width: '100%' }} disabled={loading}>
-              <LinkIcon size={18} />
-              Connect Partner
+            <button type="submit" className="btn-primary medieval-font" style={{ width: '100%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', border: '2px solid var(--medieval-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '1.1rem' }} disabled={loading}>
+              <LinkIcon size={20} />
+              Buscar Alma Gêmea
             </button>
           </form>
         )}
