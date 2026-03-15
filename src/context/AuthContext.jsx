@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
+      if (session?.user) fetchProfile(session.user.id, session.user);
       else setLoading(false);
       clearTimeout(timeout);
     });
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        await fetchProfile(session.user.id, session.user);
       } else {
         setProfile(null);
         setLoading(false);
@@ -46,20 +46,52 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const fetchProfile = async (userId) => {
+  const fetchProfile = async (userId, authUser = user) => {
     try {
+      const normalizedEmail = authUser?.email?.trim().toLowerCase() ?? null;
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
       
-      if (error && error.code !== 'PGRST116') throw error;
-      
-      // Sync email if missing in profile to ensure linking works
-      if (data && !data.email && user?.email) {
-        await supabase.from('profiles').update({ email: user.email }).eq('id', userId);
-        data.email = user.email;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      if (!data) {
+        const newProfile = {
+          id: userId,
+          email: normalizedEmail,
+          username: normalizedEmail?.split('@')[0] ?? 'aventureiro',
+          updated_at: new Date().toISOString(),
+        };
+
+        const { data: createdProfile, error: createError } = await supabase
+          .from('profiles')
+          .upsert(newProfile, { onConflict: 'id' })
+          .select('*')
+          .single();
+
+        if (createError) {
+          throw createError;
+        }
+
+        setProfile(createdProfile);
+        return;
+      }
+
+      // Sync email if missing/outdated to ensure partner linking works
+      if (normalizedEmail && data.email !== normalizedEmail) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ email: normalizedEmail, updated_at: new Date().toISOString() })
+          .eq('id', userId);
+
+        if (!updateError) {
+          data.email = normalizedEmail;
+        }
       }
       
       setProfile(data);

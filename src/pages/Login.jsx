@@ -13,9 +13,13 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!supabase) return;
+
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
     if (error) setError(error.message);
     else navigate('/');
     setLoading(false);
@@ -23,14 +27,18 @@ const Login = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    if (!supabase) return;
+
     setLoading(true);
     setError(null);
+
+    const normalizedEmail = email.trim().toLowerCase();
     const { error, data } = await supabase.auth.signUp({ 
-      email, 
+      email: normalizedEmail, 
       password,
       options: {
         data: {
-          username: email.split('@')[0], 
+          username: normalizedEmail.split('@')[0], 
         }
       }
     });
@@ -43,8 +51,8 @@ const Login = () => {
         try {
           await supabase.from('profiles').upsert({
             id: data.user.id,
-            email: email, // Nota: Verifique se a coluna 'email' existe na sua tabela 'profiles'
-            username: email.split('@')[0],
+            email: normalizedEmail,
+            username: normalizedEmail.split('@')[0],
           });
         } catch (err) {
           console.error("Erro ao criar perfil:", err);
