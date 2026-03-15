@@ -45,7 +45,7 @@ const Login = () => {
           <div style={{ background: 'rgba(244, 114, 182, 0.1)', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <Heart color="#f472b6" fill="#f472b6" size={32} />
           </div>
-          <h1 className="logo" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>Couple RPG</h1>
+          <h1 className="logo" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>Duo Quest</h1>
           <p style={{ color: 'var(--text-dim)' }}>Level up your relationship</p>
         </div>
 

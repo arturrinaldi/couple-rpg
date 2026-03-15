@@ -18,7 +18,7 @@ const Dashboard = () => {
   return (
     <div className="container">
       <nav className="navbar" style={{ borderRadius: '0 0 20px 20px', marginBottom: '24px', marginX: '-20px' }}>
-        <span className="logo">Couple RPG</span>
+        <span className="logo">Duo Quest</span>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button onClick={() => navigate('/profile')} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
             <UserIcon size={20} />

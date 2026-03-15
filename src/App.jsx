@@ -14,7 +14,7 @@ import Profile from './pages/Profile';
 const SetupNeeded = () => (
   <div className="container" style={{ textAlign: 'center', marginTop: '100px' }}>
     <div className="glass-card" style={{ padding: '40px' }}>
-      <h1 className="logo" style={{ marginBottom: '24px' }}>Couple RPG</h1>
+      <h1 className="logo" style={{ marginBottom: '24px' }}>Duo Quest</h1>
       <h2 style={{ marginBottom: '16px' }}>Setup Required 🛠️</h2>
       <p style={{ color: 'var(--text-dim)', marginBottom: '24px' }}>
         Ainda não configuramos o banco de dados online. 
