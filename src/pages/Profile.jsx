@@ -9,6 +9,8 @@ const Profile = () => {
   const [partnerEmail, setPartnerEmail] = useState('');
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
+  const [profileStatus, setProfileStatus] = useState({ msg: '', type: '' });
+  const [partnerStatus, setPartnerStatus] = useState({ msg: '', type: '' });
   const navigate = useNavigate();
 
   // Fix: Sync username when profile loads
@@ -33,12 +35,13 @@ const Profile = () => {
     const { error } = await supabase.from('profiles').upsert(updates);
     
     if (error) {
-      alert("Erro ao atualizar perfil: " + error.message);
+      setProfileStatus({ msg: "Erro: " + error.message, type: 'error' });
     } else {
-      alert('Perfil do Peregrino atualizado!');
+      setProfileStatus({ msg: 'Perfil do Peregrino atualizado! ⚔️', type: 'success' });
       refreshProfile();
     }
     setLoading(false);
+    setTimeout(() => setProfileStatus({ msg: '', type: '' }), 4000);
   };
 
   const handleLinkPartner = async (e) => {
@@ -52,12 +55,14 @@ const Profile = () => {
       .from('profiles')
       .select('id, username')
       .eq('email', emailToSearch)
-      .single();
+      .maybeSingle();
 
     if (findError) {
-      alert('Peregrino não encontrado. Verifique se o e-mail está correto e se ele já criou uma conta.');
+      setPartnerStatus({ msg: 'Erro na busca: ' + findError.message, type: 'error' });
+    } else if (!partner) {
+      setPartnerStatus({ msg: 'Peregrino não encontrado. Verifique o e-mail ou se o parceiro já logou hoje.', type: 'error' });
     } else if (partner.id === user.id) {
-      alert("Você não pode ser seu próprio parceiro!");
+      setPartnerStatus({ msg: 'Você não pode ser seu próprio parceiro!', type: 'error' });
     } else {
       const { error: updateError } = await supabase
         .from('profiles')
@@ -65,19 +70,19 @@ const Profile = () => {
         .eq('id', user.id);
 
       if (updateError) {
-        alert("Erro ao vincular: " + updateError.message);
+        setPartnerStatus({ msg: 'Erro ao vincular: ' + updateError.message, type: 'error' });
       } else {
-        // Also update the partner's partner_id to create a TWO-WAY link
         await supabase
           .from('profiles')
           .update({ partner_id: user.id })
           .eq('id', partner.id);
 
-        alert(`Você agora está unido a ${partner.username}!`);
+        setPartnerStatus({ msg: `Sucesso! Você agora está unido a ${partner.username}! ❤️`, type: 'success' });
         refreshProfile();
       }
     }
     setLoading(false);
+    setTimeout(() => setPartnerStatus({ msg: '', type: '' }), 5000);
   };
 
   return (
@@ -107,8 +112,19 @@ const Profile = () => {
           </div>
           <button type="submit" className="btn-primary medieval-font" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '1.1rem' }} disabled={loading}>
             <Save size={20} />
-            Salvar Peregrino
+            {loading ? 'Salvando...' : 'Salvar Peregrino'}
           </button>
+          {profileStatus.msg && (
+            <p style={{ 
+              marginTop: '12px', 
+              textAlign: 'center', 
+              color: profileStatus.type === 'error' ? 'var(--error)' : 'var(--success)',
+              fontSize: '0.9rem',
+              fontWeight: 600
+            }}>
+              {profileStatus.msg}
+            </p>
+          )}
         </form>
       </div>
 
@@ -137,8 +153,20 @@ const Profile = () => {
             </div>
             <button type="submit" className="btn-primary medieval-font" style={{ width: '100%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', border: '2px solid var(--medieval-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '1.1rem' }} disabled={loading}>
               <LinkIcon size={20} />
-              Buscar Alma Gêmea
+              {loading ? 'Buscando...' : 'Buscar Alma Gêmea'}
             </button>
+            {partnerStatus.msg && (
+              <p style={{ 
+                marginTop: '12px', 
+                textAlign: 'center', 
+                color: partnerStatus.type === 'error' ? 'var(--error)' : 'var(--success)',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                lineHeight: '1.4'
+              }}>
+                {partnerStatus.msg}
+              </p>
+            )}
           </form>
         )}
       </div>
