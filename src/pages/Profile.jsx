@@ -22,17 +22,19 @@ const Profile = () => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+    if (!supabase || !user) return;
+
     setLoading(true);
-    
-    // Ensure email is also saved/updated
+
+    const normalizedEmail = user.email?.trim().toLowerCase() ?? null;
     const updates = {
       id: user.id,
-      username,
-      email: user.email,
+      username: username.trim(),
+      email: normalizedEmail,
       updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase.from('profiles').upsert(updates);
+    const { error } = await supabase.from('profiles').upsert(updates, { onConflict: 'id' });
     
     if (error) {
       setProfileStatus({ msg: "Erro: " + error.message, type: 'error' });
@@ -46,6 +48,8 @@ const Profile = () => {
 
   const handleLinkPartner = async (e) => {
     e.preventDefault();
+    if (!supabase || !user) return;
+
     setLoading(true);
 
     const emailToSearch = partnerEmail.trim().toLowerCase();
@@ -64,21 +68,26 @@ const Profile = () => {
     } else if (partner.id === user.id) {
       setPartnerStatus({ msg: 'Você não pode ser seu próprio parceiro!', type: 'error' });
     } else {
-      const { error: updateError } = await supabase
+      const { error: updateCurrentUserError } = await supabase
         .from('profiles')
-        .update({ partner_id: partner.id })
+        .update({ partner_id: partner.id, updated_at: new Date().toISOString() })
         .eq('id', user.id);
 
-      if (updateError) {
-        setPartnerStatus({ msg: 'Erro ao vincular: ' + updateError.message, type: 'error' });
+      if (updateCurrentUserError) {
+        setPartnerStatus({ msg: 'Erro ao vincular: ' + updateCurrentUserError.message, type: 'error' });
       } else {
-        await supabase
+        const { error: updatePartnerError } = await supabase
           .from('profiles')
-          .update({ partner_id: user.id })
+          .update({ partner_id: user.id, updated_at: new Date().toISOString() })
           .eq('id', partner.id);
 
-        setPartnerStatus({ msg: `Sucesso! Você agora está unido a ${partner.username}! ❤️`, type: 'success' });
-        refreshProfile();
+        if (updatePartnerError) {
+          setPartnerStatus({ msg: 'Erro ao vincular parceiro: ' + updatePartnerError.message, type: 'error' });
+        } else {
+          setPartnerStatus({ msg: `Sucesso! Você agora está unido a ${partner.username || 'seu parceiro(a)'}! ❤️`, type: 'success' });
+          refreshProfile();
+          setPartnerEmail('');
+        }
       }
     }
     setLoading(false);
