@@ -13,11 +13,19 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       return;
     }
+
+    // Safety timeout: if loading takes more than 3s, force it to false
+    // to prevent getting stuck on a white screen
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
     // Check active sessions and sets the user
-    const session = supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) fetchProfile(session.user.id);
       else setLoading(false);
+      clearTimeout(timeout);
     });
 
     // Listen for changes on auth state (logged in, signed out, etc.)
@@ -29,9 +37,13 @@ export const AuthProvider = ({ children }) => {
         setProfile(null);
         setLoading(false);
       }
+      clearTimeout(timeout);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const fetchProfile = async (userId) => {

@@ -38,20 +38,28 @@ const Login = () => {
     if (error) {
       setError(error.message);
     } else {
-      // Create profile record with email
+      // Se não houver erro, tentamos criar o perfil
       if (data?.user) {
-        await supabase.from('profiles').upsert({
-          id: data.user.id,
-          email: email,
-          username: email.split('@')[0],
-          level: 1,
-          xp: 0,
-          coins: 0
-        });
-        navigate('/');
-      } else {
-        setError("Conta criada com sucesso! Você já pode entrar.");
-        setIsSignUp(false);
+        try {
+          await supabase.from('profiles').upsert({
+            id: data.user.id,
+            email: email, // Nota: Verifique se a coluna 'email' existe na sua tabela 'profiles'
+            username: email.split('@')[0],
+          });
+        } catch (err) {
+          console.error("Erro ao criar perfil:", err);
+        }
+        
+        // Se o Supabase retornou uma sessão, o usuário já está logado (autofirm desativado ou já confirmado)
+        if (data.session) {
+          navigate('/');
+        } else {
+          // Se não houver sessão, o Supabase exige confirmação por e-mail
+          setError("Conta criada! Verifique seu e-mail para confirmar o cadastro.");
+          setIsSignUp(false);
+          setEmail('');
+          setPassword('');
+        }
       }
     }
     setLoading(false);
