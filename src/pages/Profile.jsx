@@ -22,17 +22,20 @@ const Profile = () => {
     e.preventDefault();
     setLoading(true);
     
+    // Ensure email is also saved/updated
     const updates = {
       id: user.id,
       username,
-      updated_at: new Date(),
+      email: user.email,
+      updated_at: new Date().toISOString(),
     };
 
     const { error } = await supabase.from('profiles').upsert(updates);
     
-    if (error) alert(error.message);
-    else {
-      alert('Profile updated!');
+    if (error) {
+      alert("Erro ao atualizar perfil: " + error.message);
+    } else {
+      alert('Perfil do Peregrino atualizado!');
       refreshProfile();
     }
     setLoading(false);
@@ -42,15 +45,17 @@ const Profile = () => {
     e.preventDefault();
     setLoading(true);
 
+    const emailToSearch = partnerEmail.trim().toLowerCase();
+
     // Find partner by email
     const { data: partner, error: findError } = await supabase
       .from('profiles')
-      .select('id')
-      .eq('email', partnerEmail)
+      .select('id, username')
+      .eq('email', emailToSearch)
       .single();
 
     if (findError) {
-      alert('Parceiro não encontrado. Verifique se o e-mail está correto e se ele já criou uma conta.');
+      alert('Peregrino não encontrado. Verifique se o e-mail está correto e se ele já criou uma conta.');
     } else if (partner.id === user.id) {
       alert("Você não pode ser seu próprio parceiro!");
     } else {
@@ -59,9 +64,16 @@ const Profile = () => {
         .update({ partner_id: partner.id })
         .eq('id', user.id);
 
-      if (updateError) alert(updateError.message);
-      else {
-        alert('Parceiro vinculado com sucesso!');
+      if (updateError) {
+        alert("Erro ao vincular: " + updateError.message);
+      } else {
+        // Also update the partner's partner_id to create a TWO-WAY link
+        await supabase
+          .from('profiles')
+          .update({ partner_id: user.id })
+          .eq('id', partner.id);
+
+        alert(`Você agora está unido a ${partner.username}!`);
         refreshProfile();
       }
     }
@@ -95,7 +107,7 @@ const Profile = () => {
           </div>
           <button type="submit" className="btn-primary medieval-font" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '1.1rem' }} disabled={loading}>
             <Save size={20} />
-            Salvar Pergaminho
+            Salvar Peregrino
           </button>
         </form>
       </div>

@@ -55,6 +55,13 @@ export const AuthProvider = ({ children }) => {
         .single();
       
       if (error && error.code !== 'PGRST116') throw error;
+      
+      // Sync email if missing in profile to ensure linking works
+      if (data && !data.email && user?.email) {
+        await supabase.from('profiles').update({ email: user.email }).eq('id', userId);
+        data.email = user.email;
+      }
+      
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);

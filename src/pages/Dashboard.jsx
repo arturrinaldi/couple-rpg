@@ -85,7 +85,7 @@ const Dashboard = () => {
           <div style={{ minWidth: '200px' }}>
             <h2 className="medieval-font" style={{ fontSize: '1.8rem', color: 'var(--medieval-gold)', marginBottom: '4px' }}>{profile?.username || user?.email?.split('@')[0]}</h2>
             <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Heart size={14} fill="currentColor" /> Eternal Partner
+              <Heart size={14} fill="currentColor" /> Peregrino Eterno
             </p>
           </div>
         </div>

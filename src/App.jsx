@@ -32,7 +32,14 @@ const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
   if (!supabase) return <SetupNeeded />;
-  if (loading) return null; // Wait for auth check
+  if (loading) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-dark)' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div className="heart-loader" style={{ marginBottom: '20px' }}>❤️</div>
+        <p className="medieval-font" style={{ color: 'var(--medieval-gold)', fontSize: '1.2rem' }}>Despertando o Reino...</p>
+      </div>
+    </div>
+  );
   if (!user) return <Navigate to="/login" replace />;
   
   return children;
@@ -41,7 +48,14 @@ const ProtectedRoute = ({ children }) => {
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
-  if (loading) return null;
+  if (loading) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-dark)' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div className="heart-loader" style={{ marginBottom: '20px' }}>❤️</div>
+        <p className="medieval-font" style={{ color: 'var(--medieval-gold)', fontSize: '1.2rem' }}>Despertando o Reino...</p>
+      </div>
+    </div>
+  );
   if (user) return <Navigate to="/" replace />;
   
   return children;
