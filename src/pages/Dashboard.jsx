@@ -17,92 +17,96 @@ const Dashboard = () => {
 
   return (
     <div className="container">
-      <nav className="navbar" style={{ borderRadius: '0 0 20px 20px', marginBottom: '24px', marginX: '-20px' }}>
-        <span className="logo">Duo Quest</span>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={() => navigate('/profile')} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
-            <UserIcon size={20} />
+      <nav className="navbar" style={{ background: 'rgba(18, 12, 24, 0.9)', borderBottom: '3px solid var(--medieval-gold)', marginBottom: '32px' }}>
+        <span className="logo medieval-font" style={{ color: 'var(--medieval-gold)', fontSize: '1.8rem' }}>Duo Quest</span>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <button onClick={() => navigate('/profile')} style={{ background: 'none', border: 'none', color: 'var(--medieval-gold)', cursor: 'pointer' }}>
+            <UserIcon size={24} />
           </button>
-          <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
-            <LogOut size={20} />
+          <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'var(--medieval-gold)', cursor: 'pointer' }}>
+            <LogOut size={24} />
           </button>
         </div>
       </nav>
 
-      <div className="glass-card fade-in" style={{ padding: '24px', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px' }}>
+      <div className="glass-card fade-in" style={{ padding: '30px', marginBottom: '32px', border: '4px solid var(--medieval-stone)', position: 'relative', overflow: 'visible' }}>
+        <div style={{ position: 'absolute', top: '-15px', right: '20px', background: 'var(--medieval-gold)', color: '#000', padding: '4px 12px', borderRadius: '4px', fontWeight: 900, fontFamily: 'MedievalSharp', boxShadow: '0 4px 0 #b45309' }}>
+          LVL {profile?.level || 1}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
           <div style={{ position: 'relative' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, #1e293b, #334155)', border: '3px solid var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
-              {profile?.avatar_url ? <img src={profile.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%' }} /> : '👤'}
-            </div>
-            <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', background: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', border: '2px solid var(--bg-dark)' }}>
-              Lvl {profile?.level || 1}
+            <div style={{ width: '90px', height: '90px', borderRadius: '12px', background: 'var(--medieval-stone)', border: '4px solid var(--medieval-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', boxShadow: 'inset 0 0 15px rgba(0,0,0,0.5)' }}>
+              {profile?.avatar_url ? <img src={profile.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '8px' }} /> : '🧙‍♂️'}
             </div>
           </div>
           <div>
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{profile?.username || user?.email?.split('@')[0]}</h2>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.875rem' }}>Relationship Warrior</p>
+            <h2 className="medieval-font" style={{ fontSize: '1.8rem', color: 'var(--medieval-gold)', marginBottom: '4px' }}>{profile?.username || user?.email?.split('@')[0]}</h2>
+            <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Heart size={14} fill="currentColor" /> Eternal Partner
+            </p>
           </div>
         </div>
 
         {/* XP Bar */}
-        <div style={{ marginBottom: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.75rem', fontWeight: 600 }}>
-            <span style={{ color: 'var(--text-dim)' }}>EXPERIENCE</span>
-            <span style={{ color: 'var(--primary)' }}>{profile?.xp || 0} XP</span>
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '1rem', fontFamily: 'MedievalSharp', fontWeight: 600, color: 'var(--medieval-gold)' }}>
+            <span>EXP POINTS</span>
+            <span>{profile?.xp || 0} / {((profile?.level || 1) * 100)}</span>
           </div>
-          <div style={{ height: '10px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '5px', overflow: 'hidden' }}>
+          <div style={{ height: '16px', background: 'rgba(0,0,0,0.5)', borderRadius: '4px', padding: '2px', border: '2px solid var(--medieval-stone)' }}>
             <div 
               style={{ 
                 height: '100%', 
                 width: `${xpPercentage}%`, 
-                background: 'linear-gradient(90deg, var(--primary), var(--secondary))',
-                boxShadow: '0 0 10px var(--primary-glow)',
-                transition: 'width 0.5s ease-out'
+                background: 'linear-gradient(90deg, #be185d, #ec4899)',
+                borderRadius: '2px',
+                boxShadow: '0 0 15px var(--primary-glow)',
+                transition: 'width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }} 
             />
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--warning)', marginBottom: '4px' }}>
-              <Star size={16} fill="currentColor" />
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em' }}>COINS</span>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '8px', border: '2px solid var(--medieval-stone)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'var(--medieval-gold)', marginBottom: '4px' }}>
+              <Star size={18} fill="currentColor" />
+              <span className="medieval-font" style={{ fontSize: '0.9rem' }}>GOLD COINS</span>
             </div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>{profile?.coins || 0}</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: 'white' }}>{profile?.coins || 0}</div>
           </div>
-          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', marginBottom: '4px' }}>
-              <Heart size={16} fill="currentColor" />
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em' }}>LOVE LEVEL</span>
+          <div style={{ background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '8px', border: '2px solid var(--medieval-stone)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'var(--primary)', marginBottom: '4px' }}>
+              <Heart size={18} fill="currentColor" />
+              <span className="medieval-font" style={{ fontSize: '0.9rem' }}>LOVE POWER</span>
             </div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>{profile?.love_level || 1}</div>
+            <div style={{ fontSize: '2rem', fontWeight: 900, color: 'white' }}>{profile?.love_level || 1}</div>
           </div>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gap: '16px' }}>
-        <button className="glass-card" onClick={() => navigate('/quests')} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '20px', border: 'none', color: 'white', textAlign: 'left', cursor: 'pointer', width: '100%' }}>
-          <div style={{ background: 'rgba(139, 92, 246, 0.1)', padding: '12px', borderRadius: '12px' }}>
-            <Sword color="var(--secondary)" size={24} />
+      <div style={{ display: 'grid', gap: '20px' }}>
+        <button className="glass-card" onClick={() => navigate('/quests')} style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '24px', border: '4px solid var(--medieval-stone)', color: 'white', textAlign: 'left', cursor: 'pointer', width: '100%', transition: 'all 0.2s' }}>
+          <div style={{ background: 'rgba(190, 24, 93, 0.2)', padding: '16px', borderRadius: '8px', border: '2px solid #be185d' }}>
+            <Sword color="var(--primary)" size={32} />
           </div>
           <div style={{ flex: 1 }}>
-            <h3 style={{ fontSize: '1.125rem' }}>Quest Board</h3>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.875rem' }}>Complete tasks to earn XP & Coins</p>
+            <h3 className="medieval-font" style={{ fontSize: '1.4rem', color: 'var(--medieval-gold)' }}>Questing Grounds</h3>
+            <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Earn gold and glory for the kingdom</p>
           </div>
-          <div style={{ color: 'var(--text-dim)' }}>→</div>
+          <ChevronRight color="var(--medieval-gold)" size={24} />
         </button>
 
-        <button className="glass-card" onClick={() => navigate('/rewards')} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '20px', border: 'none', color: 'white', textAlign: 'left', cursor: 'pointer', width: '100%' }}>
-          <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '12px', borderRadius: '12px' }}>
-            <Trophy color="var(--accent)" size={24} />
+        <button className="glass-card" onClick={() => navigate('/rewards')} style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '24px', border: '4px solid var(--medieval-stone)', color: 'white', textAlign: 'left', cursor: 'pointer', width: '100%', transition: 'all 0.2s' }}>
+          <div style={{ background: 'rgba(251, 191, 36, 0.1)', padding: '16px', borderRadius: '8px', border: '2px solid var(--medieval-gold)' }}>
+            <Trophy color="var(--medieval-gold)" size={32} />
           </div>
           <div style={{ flex: 1 }}>
-            <h3 style={{ fontSize: '1.125rem' }}>Rewards Shop</h3>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.875rem' }}>Spend coins on special prizes</p>
+            <h3 className="medieval-font" style={{ fontSize: '1.4rem', color: 'var(--medieval-gold)' }}>Treasury Shop</h3>
+            <p style={{ color: 'var(--text-dim)', fontSize: '1rem' }}>Spend your hard-earned gold</p>
           </div>
-          <div style={{ color: 'var(--text-dim)' }}>→</div>
+          <ChevronRight color="var(--medieval-gold)" size={24} />
         </button>
       </div>
 
